@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explainable Multi-Cloud Migration Decision Framework</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f8;
+            color: #1f2937;
+        }
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 30px 40px;
+        }
+
+        .header h1 {
+            margin: 0 0 8px;
+            font-size: 28px;
+        }
+
+        .header p {
+            margin: 0;
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1250px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 22px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 19px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .field label {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #475569;
+        }
+
+        .field input {
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        .button {
+            margin-top: 20px;
+            padding: 13px 24px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background: #1d4ed8;
+        }
+
+        .status {
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .metric {
+            padding: 20px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+
+        .metric-title {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .decision {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+        }
+
+        /* ---------- CHARTS ---------- */
+
+        .chart {
+            padding: 15px 5px 5px;
+        }
+
+        .bar-row {
+            display: grid;
+            grid-template-columns: 55px 1fr 65px;
+            align-items: center;
+            gap: 10px;
+            margin: 18px 0;
+        }
+
+        .bar-label {
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .bar-background {
+            height: 28px;
+            background: #e5e7eb;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .bar {
+            height: 100%;
+            width: 0%;
+            border-radius: 6px;
+            transition: width 0.8s ease;
+        }
+
+        .factor-bar {
+            background: #2563eb;
+        }
+
+        .contribution-bar {
+            background: #7c3aed;
+        }
+
+        .bar-value {
+            font-size: 13px;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .chart-scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #94a3b8;
+            margin-left: 65px;
+            margin-right: 65px;
+        }
+
+        /* ---------- RISK FLOW ---------- */
+
+        .risk-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .risk-box {
+            padding: 16px 22px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 130px;
+            border: 1px solid #d1d5db;
+        }
+
+        .arrow {
+            font-size: 24px;
+            color: #64748b;
+        }
+
+        .consistency {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px;
+            border-radius: 10px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            margin-top: 18px;
+        }
+
+        .pass {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .explanation {
+            padding: 18px;
+            background: #eff6ff;
+            border-left: 4px solid #2563eb;
+            border-radius: 6px;
+            line-height: 1.6;
+        }
+
+        pre {
+            background: #111827;
+            color: #d1fae5;
+            padding: 18px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+            .grid,
+            .metrics,
+            .two-column {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .grid,
+            .metrics,
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>Explainable Multi-Cloud Migration Decision Framework</h1>
+    <p>Evidence-linked, consistency-validated migration risk assessment and planning</p>
+</div>
+
+<div class="container">
+
+    <!-- INPUT -->
+    <div class="card">
+        <h2>Workload Evaluation</h2>
+
+        <div class="grid">
+
+            <div class="field">
+                <label>Workload ID</label>
+                <input id="workloadId" value="WL_DEMO_001">
+            </div>
+
+            <div class="field">
+                <label>Source Cloud</label>
+                <input id="sourceCloud" value="AWS">
+            </div>
+
+            <div class="field">
+                <label>Target Cloud</label>
+                <input id="targetCloud" value="Azure">
+            </div>
+
+            <div class="field">
+                <label>Data Volume (GB)</label>
+                <input id="dataVolumeGB" type="number" value="600">
+            </div>
+
+            <div class="field">
+                <label>Data Access Locality</label>
+                <input id="dataAccessLocality" type="number" step="0.01" value="0.70">
+            </div>
+
+            <div class="field">
+                <label>Stateful Session Ratio</label>
+                <input id="statefulSessionRatio" type="number" step="0.01" value="0.40">
+            </div>
+
+            <div class="field">
+                <label>Dependency Count</label>
+                <input id="dependencyCount" type="number" value="8">
+            </div>
+
+            <div class="field">
+                <label>Dependency Tightness</label>
+                <input id="dependencyTightness" type="number" step="0.01" value="0.50">
+            </div>
+
+            <div class="field">
+                <label>Migration Hours</label>
+                <input id="migrationHours" type="number" value="40">
+            </div>
+
+            <div class="field">
+                <label>Downtime Hours</label>
+                <input id="downtimeHours" type="number" value="4">
+            </div>
+
+            <div class="field">
+                <label>Reconfiguration Cost</label>
+                <input id="reconfigurationCost" type="number" value="3000">
+            </div>
+
+            <div class="field">
+                <label>Price Variance (%)</label>
+                <input id="priceVariance" type="number" value="25">
+            </div>
+
+            <div class="field">
+                <label>Confidence</label>
+                <input id="confidence" type="number" step="0.01" value="0.90">
+            </div>
+
+            <div class="field">
+                <label>Outcome</label>
+                <input id="outcome" value="PENDING_REVIEW">
+            </div>
+
+        </div>
+
+        <button class="button" onclick="evaluateMigration()">
+            Evaluate Migration
+        </button>
+
+        <div id="status" class="status"></div>
+    </div>
+
+
+    <!-- RESULTS -->
+    <div id="results" class="hidden">
+
+        <!-- DECISION SUMMARY -->
+        <div class="card">
+            <h2>Decision Summary</h2>
+
+            <div class="metrics">
+
+                <div class="metric">
+                    <div class="metric-title">MRP Score</div>
+                    <div id="mrpScore" class="metric-value">-</div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-title">Risk Level</div>
+                    <div id="riskLevel" class="metric-value">-</div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-title">Decision</div>
+                    <div id="decision" class="decision">-</div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-title">Planner Action</div>
+                    <div id="plannerAction" class="decision">-</div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- CHARTS -->
+        <div class="two-column">
+
+            <div class="card">
+                <h2>Normalized Risk Factors</h2>
+
+                <div class="chart">
+
+                    <div class="bar-row">
+                        <div class="bar-label">DGS</div>
+                        <div class="bar-background">
+                            <div id="barDGS" class="bar factor-bar"></div>
+                        </div>
+                        <div id="valueDGS" class="bar-value">0</div>
+                    </div>
+
+                    <div class="bar-row">
+                        <div class="bar-label">ASS</div>
+                        <div class="bar-background">
+                            <div id="barASS" class="bar factor-bar"></div>
+                        </div>
+                        <div id="valueASS" class="bar-value">0</div>
+                    </div>
+
+                    <div class="bar-row">
+                        <div class="bar-label">DCI</div>
+                        <div class="bar-background">
+                            <div id="barDCI" class="bar factor-bar"></div>
+                        </div>
+                        <div id="valueDCI" class="bar-value">0</div>
+                    </div>
+
+                    <div class="bar-row">
+                        <div class="bar-label">CVS</div>
+                        <div class="bar-background">
+                            <div id="barCVS" class="bar factor-bar"></div>
+                        </div>
+                        <div id="valueCVS" class="bar-value">0</div>
+                    </div>
+
+                    <div class="bar-row">
+                        <div class="bar-label">MOC</div>
+                        <div class="bar-background">
+                            <div id="barMOC" class="bar factor-bar"></div>
+                        </div>
+                        <div id="valueMOC" class="bar-value">0</div>
+                    </div>
+
+                    <div class="chart-scale">
+                        <span>0</span>
+                        <span>0.5</span>
+                        <span>1.0</span>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="card">
+                <h2>Explainability Contributions</h2>
+
+                <div class="chart">
+
+                    <div class="bar-row">
+                        <div class="bar-label">DGS</div>
+                        <div class="bar-background">
+                            <div id="contributionDGS" class="bar contribution-bar"></div>
+                        </div>
+                        <div id="contributionValueDGS" class="bar-value">0%</div>
+                    </div>
+
+                    <div class="bar-row">
+                        <div class="bar-label">ASS</div>
+                        <div class="bar-background">
+                            <div id="contributionASS" class="bar contribution-bar"></div>
+                        </div>
+                        <div id="contributionValueASS" class="bar-value">0%</div>
+                    </div>
+
+                    <div class="bar-row">
+                        <div class="bar-label">DCI</div>
+                        <div class="bar-background">
+                            <div id="contributionDCI" class="bar contribution-bar"></div>
+                        </div>
+                        <div id="contributionValueDCI" class="bar-value">0%</div>
+                    </div>
+
+                    <div class="bar-row">
+                        <div class="bar-label">CVS</div>
+                        <div class="bar-background">
+                            <div id="contributionCVS" class="bar contribution-bar"></div>
+                        </div>
+                        <div id="contributionValueCVS" class="bar-value">0%</div>
+                    </div>
+
+                    <div class="bar-row">
+                        <div class="bar-label">MOC</div>
+                        <div class="bar-background">
+                            <div id="contributionMOC" class="bar contribution-bar"></div>
+                        </div>
+                        <div id="contributionValueMOC" class="bar-value">0%</div>
+                    </div>
+
+                    <div class="chart-scale">
+                        <span>0%</span>
+                        <span>50%</span>
+                        <span>100%</span>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- DECISION FLOW -->
+        <div class="card">
+            <h2>Migration Decision Path</h2>
+
+            <div class="risk-flow">
+
+                <div class="risk-box">
+                    Workload
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="risk-box">
+                    MRP<br>
+                    <span id="flowScore">-</span>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="risk-box">
+                    <span id="flowRisk">-</span>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="risk-box">
+                    <span id="flowDecision">-</span>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="risk-box">
+                    <span id="flowAction">-</span>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- EXPLAINABILITY -->
+        <div class="card">
+            <h2>Explainability</h2>
+
+            <div id="explanation" class="explanation"></div>
+
+            <div class="consistency">
+                <div>
+                    <strong>Explanation–Evidence Consistency</strong><br>
+                    The persisted evidence contribution values are compared with
+                    the generated explanation values.
+                </div>
+
+                <div id="consistencyStatus" class="pass">
+                    ✓ PASS
+                </div>
+            </div>
+        </div>
+
+
+        <!-- EVIDENCE + PLAN -->
+        <div class="two-column">
+
+            <div class="card">
+                <h2>Decision Evidence</h2>
+                <pre id="evidence"></pre>
+            </div>
+
+            <div class="card">
+                <h2>Migration Plan</h2>
+                <pre id="migrationPlan"></pre>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+async function evaluateMigration() {
+
+    const status = document.getElementById("status");
+
+    status.innerText =
+        "Evaluating workload through the migration pipeline...";
+
+    const body = {
+
+        workloadId:
+            document.getElementById("workloadId").value,
+
+        sourceCloud:
+            document.getElementById("sourceCloud").value,
+
+        targetCloud:
+            document.getElementById("targetCloud").value,
+
+        dataVolumeGB:
+            Number(document.getElementById("dataVolumeGB").value),
+
+        dataAccessLocality:
+            Number(document.getElementById("dataAccessLocality").value),
+
+        statefulSessionRatio:
+            Number(document.getElementById("statefulSessionRatio").value),
+
+        dependencyCount:
+            Number(document.getElementById("dependencyCount").value),
+
+        dependencyTightness:
+            Number(document.getElementById("dependencyTightness").value),
+
+        migrationHours:
+            Number(document.getElementById("migrationHours").value),
+
+        downtimeHours:
+            Number(document.getElementById("downtimeHours").value),
+
+        reconfigurationCost:
+            Number(document.getElementById("reconfigurationCost").value),
+
+        priceVariance:
+            Number(document.getElementById("priceVariance").value),
+
+        confidence:
+            Number(document.getElementById("confidence").value),
+
+        outcome:
+            document.getElementById("outcome").value
+    };
+
+
+    try {
+
+        const response =
+            await fetch("/api/migration/orchestrate", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(body)
+            });
+
+
+        if (!response.ok) {
+            throw new Error("HTTP " + response.status);
+        }
+
+
+        const data = await response.json();
+
+        displayResults(data);
+
+        status.innerText =
+            "Evaluation completed successfully.";
+
+    }
+
+    catch (error) {
+
+        status.innerText =
+            "Evaluation failed: " + error.message;
+
+        console.error(error);
+    }
+}
+
+
+
+function setBar(id, value, max) {
+
+    const percentage =
+        Math.max(0, Math.min(100, (value / max) * 100));
+
+    document.getElementById(id).style.width =
+        percentage + "%";
+}
+
+
+
+function displayResults(data) {
+
+    document.getElementById("results")
+        .classList.remove("hidden");
+
+
+    const normalized =
+        data.normalization;
+
+    const contributions =
+        data.explanation.contributions;
+
+
+    /* SUMMARY */
+
+    document.getElementById("mrpScore").innerText =
+        Number(data.mrp.mrpScore).toFixed(4);
+
+    document.getElementById("riskLevel").innerText =
+        data.mrp.riskLevel;
+
+    document.getElementById("decision").innerText =
+        data.decision.decision;
+
+    document.getElementById("plannerAction").innerText =
+        data.migrationPlan.action;
+
+
+    /* NORMALIZED FACTOR BARS */
+
+    const factors = {
+
+        DGS: Number(normalized.dgs),
+        ASS: Number(normalized.ass),
+        DCI: Number(normalized.dci),
+        CVS: Number(normalized.cvs),
+        MOC: Number(normalized.moc)
+    };
+
+
+    Object.keys(factors).forEach(function(factor) {
+
+        setBar(
+            "bar" + factor,
+            factors[factor],
+            1
+        );
+
+        document.getElementById(
+            "value" + factor
+        ).innerText =
+            factors[factor].toFixed(2);
+
+    });
+
+
+    /* CONTRIBUTION BARS */
+
+    const contributionValues = {
+
+        DGS: Number(contributions.DGS),
+        ASS: Number(contributions.ASS),
+        DCI: Number(contributions.DCI),
+        CVS: Number(contributions.CVS),
+        MOC: Number(contributions.MOC)
+    };
+
+
+    Object.keys(contributionValues).forEach(function(factor) {
+
+        setBar(
+            "contribution" + factor,
+            contributionValues[factor],
+            100
+        );
+
+        document.getElementById(
+            "contributionValue" + factor
+        ).innerText =
+            contributionValues[factor].toFixed(2) + "%";
+
+    });
+
+
+    /* EXPLANATION */
+
+    document.getElementById("explanation").innerHTML =
+
+        "<strong>Primary factor:</strong> " +
+        data.explanation.primaryFactor +
+
+        "<br><strong>Contribution:</strong> " +
+        Number(data.explanation.primaryContribution).toFixed(2) +
+
+        "%<br><br>" +
+
+        data.explanation.explanation;
+
+
+    /* FLOW */
+
+    document.getElementById("flowScore").innerText =
+        Number(data.mrp.mrpScore).toFixed(4);
+
+    document.getElementById("flowRisk").innerText =
+        data.mrp.riskLevel;
+
+    document.getElementById("flowDecision").innerText =
+        data.decision.decision;
+
+    document.getElementById("flowAction").innerText =
+        data.migrationPlan.action;
+
+
+    /* EVIDENCE */
+
+    document.getElementById("evidence").innerText =
+        JSON.stringify(data.evidence, null, 2);
+
+
+    /* MIGRATION PLAN */
+
+    document.getElementById("migrationPlan").innerText =
+        JSON.stringify(data.migrationPlan, null, 2);
+
+
+    /* CONSISTENCY CHECK */
+
+    const explanationContributions =
+        data.explanation.contributions;
+
+    const evidence = data.evidence;
+
+    const fields = [
+        ["DGS", "dgsContribution"],
+        ["ASS", "assContribution"],
+        ["DCI", "dciContribution"],
+        ["CVS", "cvsContribution"],
+        ["MOC", "mocContribution"]
+    ];
+
+    let consistent = true;
+
+    fields.forEach(function(pair) {
+
+        const explanationValue =
+            Number(explanationContributions[pair[0]]);
+
+        const evidenceValue =
+            Number(evidence[pair[1]]);
+
+        if (
+            Math.abs(
+                explanationValue - evidenceValue
+            ) > 0.01
+        ) {
+            consistent = false;
+        }
+    });
+
+
+    document.getElementById("consistencyStatus").innerText =
+        consistent
+            ? "✓ PASS — Evidence matches explanation"
+            : "✗ FAIL — Evidence differs from explanation";
+
+}
+
+</script>
+
+</body>
+</html>

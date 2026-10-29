@@ -1,0 +1,35 @@
+﻿# Java / Maven / Spring generated output
+**/target/
+**/build/
+**/out/
+*.class
+*.log
+
+# IDE and OS caches
+.idea/
+.vscode/
+.netbeans/
+.gradle/
+.DS_Store
+Thumbs.db
+
+# Local secrets (review before committing any exception)
+.env
+.env.*
+!.env.example
+**/application-local.properties
+**/application-local.yml
+**/application-local.yaml
+**/credentials*
+**/secrets*
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+
+MRP_UPLOAD_AUDIT.txt
+
+MRP_UPLOAD_AUDIT.txt
+
+NetBeansProjects.rar
